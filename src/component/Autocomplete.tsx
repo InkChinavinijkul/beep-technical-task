@@ -61,23 +61,10 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
     setOpenPopper(false)
   )
 
-  const filterList = (
-    // list: string[],
-    list: SelectedItem<T>[],
-    target: string
-    // customFilter: (...args: unknown[]) => boolean
-  ) => {
+  const filterList = (list: SelectedItem<T>[], target: string) => {
     if (!list || !list.length) return
 
     const regex = new RegExp(`.*${target}.*`)
-    // const newList = list.filter(({ value }) => {
-    //   value.trim()
-    //   regex.test(value)
-    // })
-    // const newList = list.filter((value) => {
-    //   value.trim()
-    //   regex.test(value)
-    // })
     try {
       if (typeof list[0].value !== "string") throw new Error()
       const newList = list.filter(({ value }) => {
@@ -117,7 +104,6 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
   useEffect(() => {
     let timer: number
     const debounce = (fn, delay) => {
-      // let timer
       return (...args) => {
         clearTimeout(timer)
         timer = setTimeout(() => {
@@ -137,11 +123,6 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
 
   return (
     <>
-      {/* <div>
-        {filteredList.map((item) =>
-          item.isSelected ? <div>{item.value}</div> : null
-        )}
-      </div> */}
       <label htmlFor="autocomplete-label">{label}</label>
       <input
         type="text"
@@ -149,21 +130,12 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
         disabled={isDisabled}
         placeholder={placeHolder}
         onKeyDown={(e) => handleKeyDown(e as React.KeyboardEvent<Element>)}
-        // value={searchVal}
-        // onChange={(e) =>
-        // 	debounce(() => {
-        // 		setSearchVal(e.target.value)
-        // 	})
-        // }
-        // onChange={(e) => debounceTest(setSearchVal(e.target.value))}
         onChange={(e) => {
           setIsLoading(true)
           setSearchVal(e.target.value)
         }}
         onClick={() => setOpenPopper(true)}
       />
-      {/* <button onClick={() => setSearchVal("5353")}>Test</button> */}
-
       {openPopper ? (
         <>
           <div
@@ -171,12 +143,10 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
             style={styles.popper}
             {...attributes.popper}
           >
-            {/* {isLoading ? "...loading" : null} */}
             <List
               isLoading={isLoading}
               customLabel={customLabel}
               renderOption={renderOption}
-              // list={filteredList.map(({ value }) => value)}
               highlightIndex={highlightedIndex}
               list={filteredList}
               handleClick={handleClick}
