@@ -20,4 +20,4 @@ included mockData is an array of strings and that works just fine
 
 mock2 is an array of objects and that still doesn't work and it should so that needs fixing
 
-### I'd very much appreciate and feedback or advice on how I can improve my code. Thank you!
+### I'd very much appreciate any feedback or advice on how I can improve my code. Thank you!
