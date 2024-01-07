@@ -21,7 +21,6 @@ const List = <T,>(props: IListProps<T>) => {
     list,
     highlightIndex,
     setDropDownElement,
-    customLabel,
     renderOption,
     isLoading,
     handleClick,
@@ -55,9 +54,6 @@ const List = <T,>(props: IListProps<T>) => {
                 : "bg-sky-500 hover:bg-sky-900"
             } focus:outline-none p-1 w-24`}
           >
-            {/* {customLabel
-              ? (customLabel(item.value) as React.ReactNode)
-              : (item.value as React.ReactNode)} */}
             {item.value as React.ReactNode}
           </li>
         )

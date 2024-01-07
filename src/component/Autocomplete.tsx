@@ -26,7 +26,7 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
     data: mockData,
     isDisabled = false,
     placeHolder,
-    synchronous = false,
+    synchronous = true,
     label,
     customLabel,
     renderOption
