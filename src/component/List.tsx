@@ -47,7 +47,7 @@ const List = <T,>(props: IListProps<T>) => {
             onClick={() => handleClick(index)}
             className={`${
               highlightIndex === index && item.isSelected
-                ? "bg-orange-900"
+                ? "bg-orange-900 hover:bg-orange-900"
                 : highlightIndex === index
                 ? "bg-sky-900"
                 : item.isSelected
