@@ -9,6 +9,7 @@ import useClickAwayListener from "../hooks/useClickAwayListener"
 interface IAutocompleteProps<T> {
   isDisabled?: boolean
   data: T[]
+  synchronous?: boolean
   placeHolder?: string
   label?: string
   customLabel?: (item: T) => string
@@ -25,6 +26,7 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
     data: mockData,
     isDisabled = false,
     placeHolder,
+    synchronous = false,
     label,
     customLabel,
     renderOption
@@ -52,6 +54,7 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
       return { isSelected: false, value }
     })
     setFilteredList(initialList)
+    console.log("this is running")
     setSelectedOptions(initialList)
     setIsLoading(false)
   }, [mockData])
@@ -60,19 +63,52 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
   useClickAwayListener([referenceElement, dropDownElement] as Element[], () =>
     setOpenPopper(false)
   )
-
+  console.log("filteredList", filteredList)
+  console.log("selectedOptions", selectedOptions)
   const filterList = (list: SelectedItem<T>[], target: string) => {
     if (!list || !list.length) return
 
     const regex = new RegExp(`.*${target}.*`)
     try {
-      if (typeof list[0].value !== "string") throw new Error()
-      const newList = list.filter(({ value }) => {
-        value.trim()
-        return regex.test(value.trim())
-      })
-      setFilteredList(newList)
-      setIsLoading(false)
+      if (typeof list[0].value !== "string") {
+        if (customLabel) {
+          // const customList = list?.map((selectedItem) => {
+          //   // deep clone not actually needed but i'll keep it
+          //   // since separating variables like this is maybe more readable(?)
+          //   const isSelected = selectedItem.isSelected
+          //   const deepClone = structuredClone(selectedItem.value)
+          //   return { isSelected, value: customLabel(deepClone) }
+          // })
+          // const newList = customList.filter(({ value }) => {
+          //   value.trim()
+          //   return regex.test(value.trim())
+          // })
+          console.log("list", list)
+          const customList = list?.reduce((accumulator, selectedItem) => {
+            const isSelected = selectedItem.isSelected
+            const deepClone = structuredClone(selectedItem.value)
+            const value = customLabel(deepClone)
+
+            if (regex.test(value.trim())) {
+              accumulator.push({ isSelected, value })
+            }
+
+            return accumulator
+          }, [] as { isSelected: boolean; value: string }[])
+          setFilteredList(customList as SelectedItem<T>[])
+          // setFilteredList(newList as SelectedItem<T>[])
+          setIsLoading(false)
+        } else {
+          throw new Error()
+        }
+      } else {
+        const newList = list.filter(({ value }) => {
+          value.trim()
+          return regex.test(value.trim())
+        })
+        setFilteredList(newList)
+        setIsLoading(false)
+      }
     } catch (err) {
       alert(err)
     }
@@ -93,34 +129,41 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
   }
 
   const handleClick = (index: number) => {
-    const newList = [...filteredList]
+    const newList = [...selectedOptions]
+
     newList[index].isSelected = !newList[index].isSelected
     setHighlightedIndex(index)
-    setFilteredList(newList)
+
+    // this is some messy spaghetti set state logic
+    setSelectedOptions(newList)
+    filterList(newList, searchVal)
   }
 
   // tried declaring and calling debounce from elsewhere but didn't work
   // ran out of time so just used this
   useEffect(() => {
-    let timer: number
-    const debounce = (fn, delay) => {
-      return (...args) => {
-        clearTimeout(timer)
-        timer = setTimeout(() => {
-          fn(...args)
-        }, delay)
+    if (synchronous) {
+      let timer: number
+      const debounce = (fn, delay) => {
+        return (...args) => {
+          clearTimeout(timer)
+          timer = setTimeout(() => {
+            fn(...args)
+          }, delay)
+        }
       }
-    }
 
-    const debouncedFilterList = debounce(filterList, 500)
+      const debouncedFilterList = debounce(filterList, 500)
 
-    debouncedFilterList(selectedOptions, searchVal)
+      debouncedFilterList(selectedOptions, searchVal)
 
-    return () => {
-      clearTimeout(timer)
+      return () => {
+        clearTimeout(timer)
+      }
+    } else {
+      filterList(selectedOptions, searchVal)
     }
   }, [searchVal, selectedOptions])
-
   return (
     <>
       <label htmlFor="autocomplete-label">{label}</label>
