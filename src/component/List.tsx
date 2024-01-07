@@ -51,7 +51,7 @@ const List = <T,>(props: IListProps<T>) => {
                 : highlightIndex === index
                 ? "bg-sky-900"
                 : item.isSelected
-                ? "bg-orange-500"
+                ? "bg-orange-500 hover:bg-orange-900"
                 : "bg-sky-500"
             } focus:outline-none hover:bg-sky-900 p-1 w-24`}
           >
