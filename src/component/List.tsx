@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react"
 import { SelectedItem } from "./Autocomplete"
 
 interface IListProps<T> {
@@ -14,10 +13,9 @@ interface IListProps<T> {
   handleKeyDown: (e: React.KeyboardEvent<Element>) => void
 }
 
-// const createCustomList = <L, T,>(list: L[], ref: React.MutableRefObject<T | null>) : T | T[] => {
-
-// }
-
+// the way i handled renderOption is pretty awkward
+// the way i had to handle customLabel is even more awkward
+// but it wouldn't work otherwise. feedback certainly appreciated
 const List = <T,>(props: IListProps<T>) => {
   const {
     list,
@@ -27,15 +25,9 @@ const List = <T,>(props: IListProps<T>) => {
     renderOption,
     isLoading,
     handleClick,
-    handleKeyDown,
-    customList
+    handleKeyDown
   } = props
-  // const focusedEl = useRef<HTMLLIElement | null>(null)
-  // useEffect(() => {
-  //   if (focusedEl) {
-  //     focusedEl.current?.focus()
-  //   }
-  // }, [])
+
   return isLoading ? (
     <div>Loading...</div>
   ) : !list.length ? (
@@ -51,16 +43,8 @@ const List = <T,>(props: IListProps<T>) => {
           renderOption(item.value)
         ) : (
           <li
-            // autoFocus={!index}
             tabIndex={index}
-            // ref={!index ? focusedEl : undefined}
-            // onClick={(e) => (focusedEl.current = e.currentTarget)}
             onClick={() => handleClick(index)}
-            // className={`bg-sky-500 hover:bg-sky-900 focus:ring focus:ring-violet-300 focus:bg-sky-900 p-1 w-24 ${
-            //   item.isSelected ? "bg-orange-500" : ""
-            // }`}
-            // onKeyDown={handleKeyDown}
-            // ${item.isSelected ? "bg-orange-500" : ""}`}
             className={`${
               highlightIndex === index && item.isSelected
                 ? "bg-orange-900"
@@ -74,9 +58,6 @@ const List = <T,>(props: IListProps<T>) => {
             {customLabel
               ? (customLabel(item.value) as React.ReactNode)
               : (item.value as React.ReactNode)}
-            {/* {typeof item.value === "string"
-              ? (item.value as React.ReactNode)
-              : null} */}
           </li>
         )
       )}
