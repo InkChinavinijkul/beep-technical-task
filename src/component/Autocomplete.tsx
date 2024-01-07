@@ -54,7 +54,6 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
       return { isSelected: false, value }
     })
     setFilteredList(initialList)
-    console.log("this is running")
     setSelectedOptions(initialList)
     setIsLoading(false)
   }, [mockData])
@@ -63,8 +62,6 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
   useClickAwayListener([referenceElement, dropDownElement] as Element[], () =>
     setOpenPopper(false)
   )
-  console.log("filteredList", filteredList)
-  console.log("selectedOptions", selectedOptions)
   const filterList = (list: SelectedItem<T>[], target: string) => {
     if (!list || !list.length) return
 
@@ -72,18 +69,6 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
     try {
       if (typeof list[0].value !== "string") {
         if (customLabel) {
-          // const customList = list?.map((selectedItem) => {
-          //   // deep clone not actually needed but i'll keep it
-          //   // since separating variables like this is maybe more readable(?)
-          //   const isSelected = selectedItem.isSelected
-          //   const deepClone = structuredClone(selectedItem.value)
-          //   return { isSelected, value: customLabel(deepClone) }
-          // })
-          // const newList = customList.filter(({ value }) => {
-          //   value.trim()
-          //   return regex.test(value.trim())
-          // })
-          console.log("list", list)
           const customList = list?.reduce((accumulator, selectedItem) => {
             const isSelected = selectedItem.isSelected
             const deepClone = structuredClone(selectedItem.value)
@@ -96,7 +81,6 @@ const Autocomplete = <T,>(props: IAutocompleteProps<T>) => {
             return accumulator
           }, [] as { isSelected: boolean; value: string }[])
           setFilteredList(customList as SelectedItem<T>[])
-          // setFilteredList(newList as SelectedItem<T>[])
           setIsLoading(false)
         } else {
           throw new Error()
