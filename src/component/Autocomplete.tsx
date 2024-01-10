@@ -4,19 +4,35 @@ import List from "./List"
 // import { debounce } from "../utilities/utilities"
 import useClickAwayListener from "../hooks/useClickAwayListener"
 
-// i wanted to try to make customLabel required IF T !== string
-// but i couldn't figure out how to do it/ran out of time
-interface IAutocompleteProps<T> {
+// this way works
+// https://www.benmvp.com/blog/conditional-react-props-typescript/
+// https://stackoverflow.com/questions/51412872/optional-properties-depending-on-other-property
+// define a common type with static parameters
+interface AutocompleteCommonProps<T> {
   isDisabled?: boolean
-  data: T[]
   synchronous?: boolean
   placeHolder?: string
   label?: string
-  customLabel: T extends string[]
-    ? ((item: T) => string) | undefined
-    : (item: T) => string
   renderOption?: (item: T) => React.ReactNode
 }
+
+// define a union type (or whatever it's called) with the dynamic parameters
+// you want. notice the customLabel parameter in the 2 types. also the | in
+// the beginning in previous version was probably not needed
+type AutocompleteOptionalProps<T> =
+  | {
+      data: string[]
+      customLabel?: (item: string) => string
+    }
+  | {
+      data: T[]
+      customLabel: (item: T) => string
+    }
+
+// merge/union both types together
+type IAutocompleteProps<T> = AutocompleteCommonProps<T> &
+  AutocompleteOptionalProps<T>
+
 export interface SelectedItem<T> {
   id?: string
   isSelected: boolean

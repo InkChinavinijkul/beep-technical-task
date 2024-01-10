@@ -20,12 +20,12 @@ function App() {
   return (
     <div>
       <Autocomplete
-        data={mock2}
+        data={mockData}
         placeHolder={"Search..."}
         label={"Search Things"}
-        customLabel={(item) => {
-          return item.name
-        }}
+        // customLabel={(item) => {
+        //   return item.name
+        // }}
         // customLabel={(item) => item + "123"}
         // renderOption={(item) => <p>{item + "123"}</p>}
       />
