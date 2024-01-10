@@ -12,7 +12,9 @@ interface IAutocompleteProps<T> {
   synchronous?: boolean
   placeHolder?: string
   label?: string
-  customLabel?: (item: T) => string
+  customLabel: T extends string[]
+    ? ((item: T) => string) | undefined
+    : (item: T) => string
   renderOption?: (item: T) => React.ReactNode
 }
 export interface SelectedItem<T> {
